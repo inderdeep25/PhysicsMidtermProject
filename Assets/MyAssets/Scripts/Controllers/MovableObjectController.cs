@@ -32,6 +32,7 @@ public class MovableObjectController : MonoBehaviour
     }
 
     public float GetExactForceRequiredToReachDestination(){
+        _minimumForceRequired = CalculateMinimumForceRequired();
         float result = _minimumForceRequired + _frictionalForce;
         return result;
     }

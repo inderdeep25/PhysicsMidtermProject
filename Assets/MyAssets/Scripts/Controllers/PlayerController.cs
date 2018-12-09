@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour {
     private bool _isPlayerInStartPointOfAnyMovableObject;
     private MovableObjectController _objectToMove;
 
+    private UIHandler _uiHandler;
+
+    private bool _isGaugeOpen = false;
+
     // Use this for initialization
     void Start () {
         _animationHandler = GetComponent<PlayerAnimationHandler>();
@@ -19,6 +23,8 @@ public class PlayerController : MonoBehaviour {
 
         _isPlayerInStartPointOfAnyMovableObject = false;
         _objectToMove = null;
+
+        _uiHandler = GameObject.Find("Canvas").GetComponent<UIHandler>();
 
     }
 	
@@ -32,10 +38,22 @@ public class PlayerController : MonoBehaviour {
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && _isPlayerInStartPointOfAnyMovableObject){
-            //var minimumForceRequired = _objectToMove.GetMinimumForceRequired();
-            //_objectToMove.PushObject(minimumForceRequired + 220);
-            _objectToMove.PushObject(_objectToMove.GetExactForceRequiredToReachDestination());
+        if(Input.GetKeyDown(KeyCode.Space) && _isPlayerInStartPointOfAnyMovableObject && _isGaugeOpen)
+        {
+            _uiHandler.SetPowerGauge(false);
+
+            var percentageOfExactForceToApply = _uiHandler.GetAccuracyForCurrentGaugeValue() / 100f;
+            var forceToApply = _objectToMove.GetExactForceRequiredToReachDestination() * percentageOfExactForceToApply;
+            Debug.Log("Value From Gauge (int) -> " + forceToApply.ToString());
+
+            _objectToMove.PushObject(forceToApply);
+            _isGaugeOpen = false;
+        }
+        else if(Input.GetKeyDown(KeyCode.Space) && _isPlayerInStartPointOfAnyMovableObject && !_isGaugeOpen)
+        {
+            Debug.Log("Should open gauge!");
+            _uiHandler.SetPowerGauge(true);
+            _isGaugeOpen = true;
         }
     }
 
@@ -53,6 +71,7 @@ public class PlayerController : MonoBehaviour {
     private void OnTriggerEnter(Collider otherCollider)
     {
         if(otherCollider.tag == "StartPoint"){
+            Debug.Log("Should enable Space");
             _isPlayerInStartPointOfAnyMovableObject = true;
             _objectToMove = otherCollider.GetComponentInParent<MovableObjectController>();
         }
@@ -62,8 +81,12 @@ public class PlayerController : MonoBehaviour {
     {
         if (otherCollider.tag == "StartPoint")
         {
+            Debug.Log("Should close gauge and disable Space!");
             _isPlayerInStartPointOfAnyMovableObject = false;
             _objectToMove = null;
+            _uiHandler.SetPowerGauge(false);
+            _uiHandler.ResetGauge();
+            _isGaugeOpen = false;
         }
     }
 }
