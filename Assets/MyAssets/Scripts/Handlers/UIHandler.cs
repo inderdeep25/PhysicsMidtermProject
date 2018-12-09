@@ -10,6 +10,7 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private Text _timeTextLabel;
 
     [SerializeField] private GameObject _gameResultPanel;
+    [SerializeField] private GameObject _infoPanel;
     [SerializeField] private Text _gameResultLabel;
 
     public bool shouldUpdateTime = true;
@@ -34,6 +35,10 @@ public class UIHandler : MonoBehaviour
     {
         _shouldPowerGaugeMove = shouldStart;
         _powerGauge.gameObject.SetActive(shouldStart);
+    }
+
+    public void SetInfoPanelActive(bool active){
+        _infoPanel.SetActive(active);
     }
 
     public float GetAccuracyForCurrentGaugeValue()
@@ -77,6 +82,7 @@ public class UIHandler : MonoBehaviour
     void Start () {
         _powerGauge.gameObject.SetActive(false);
         _gameResultPanel.SetActive(false);
+        _infoPanel.SetActive(false);
     }
 	
     private void HandlePowerGauge(){

@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour {
         else if(Input.GetKeyDown(KeyCode.Space) && _isPlayerInStartPointOfAnyMovableObject && !_isGaugeOpen)
         {
             Debug.Log("Should open gauge!");
+            _uiHandler.SetInfoPanelActive(false);
             _uiHandler.SetPowerGauge(true);
             _isGaugeOpen = true;
         }
@@ -70,6 +71,7 @@ public class PlayerController : MonoBehaviour {
     {
         if(otherCollider.tag == "StartPoint"){
             Debug.Log("Should enable Space");
+            _uiHandler.SetInfoPanelActive(true);
             _isPlayerInStartPointOfAnyMovableObject = true;
             _objectToMove = otherCollider.GetComponentInParent<MovableObjectController>();
         }
@@ -82,6 +84,7 @@ public class PlayerController : MonoBehaviour {
             Debug.Log("Should close gauge and disable Space!");
             _isPlayerInStartPointOfAnyMovableObject = false;
             _objectToMove = null;
+            _uiHandler.SetInfoPanelActive(false);
             _uiHandler.SetPowerGauge(false);
             _uiHandler.ResetGauge();
             _isGaugeOpen = false;
