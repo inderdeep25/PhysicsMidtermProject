@@ -20,6 +20,8 @@ public class MovableObjectController : MonoBehaviour
     [SerializeField] private Transform destination;
     [SerializeField] private GameObject _playerPlatform;
 
+    private bool _goalAchieved = false;
+
     public bool hasEnteredDestination = false;
     public bool hasExitedDestination = false;
 
@@ -40,15 +42,24 @@ public class MovableObjectController : MonoBehaviour
 
     public void PushObject(float force)
     {
-        if(!_isObjectInMotion){
-            _initialPosition = this.transform.position;
-            _playerPlatform.SetActive(false);
-            _isObjectInMotion = true;
-            _pushForce = force;
-            _timeElapsed = 0.0f;
+        if(!_goalAchieved)
+        {
+            if (!_isObjectInMotion)
+            {
+                _initialPosition = this.transform.position;
+                _playerPlatform.SetActive(false);
+                _isObjectInMotion = true;
+                _pushForce = force;
+                _timeElapsed = 0.0f;
+            }
+            else
+            {
+                Debug.Log("Not applying force as object is already in motion!");
+            }
         }else{
-            Debug.Log("Not applying force as object is already in motion!");
+            Debug.Log("Not applying force as object is already reached destination!");
         }
+
     }
 
     private float CalculateAcceleration()
@@ -90,6 +101,8 @@ public class MovableObjectController : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
         _minimumForceRequired = CalculateMinimumForceRequired();
         _initialPosition = this.transform.position;
+        hasExitedDestination = false;
+        hasEnteredDestination = false;
     }
 
     void Update()
@@ -114,7 +127,9 @@ public class MovableObjectController : MonoBehaviour
                 _isObjectInMotion = false;
 
                 if (hasEnteredDestination && !hasExitedDestination){
+                    _goalAchieved = true;
                     var material = this.gameObject.GetComponent<MeshRenderer>().materials[0];
+                    _playerPlatform.GetComponent<BoxCollider>().isTrigger = false;
                     material.color = Color.green;
                 }
                 else if(hasEnteredDestination && hasExitedDestination){
