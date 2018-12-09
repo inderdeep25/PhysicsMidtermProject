@@ -8,19 +8,20 @@ public class MovableObjectController : MonoBehaviour
 
     private float _pushForce = 0;
     private float _acceleration = 0.0f;
-
     private float _timeElapsed = 0.0f;
-    private bool _isObjectInMotion = false;
-    private Rigidbody _rigidBody = null;
     private float _minimumForceRequired;
     private float _frictionalForce;
 
+    private bool _goalAchieved = false;
+    private bool _isObjectInMotion = false;
+
     private Vector3 _initialPosition;
+
+    private Rigidbody _rigidBody = null;
+    private GameManager _gameManager;
 
     [SerializeField] private Transform destination;
     [SerializeField] private GameObject _playerPlatform;
-
-    private bool _goalAchieved = false;
 
     public bool hasEnteredDestination = false;
     public bool hasExitedDestination = false;
@@ -104,6 +105,8 @@ public class MovableObjectController : MonoBehaviour
         _initialPosition = this.transform.position;
         hasExitedDestination = false;
         hasEnteredDestination = false;
+
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     void Update()
@@ -129,6 +132,7 @@ public class MovableObjectController : MonoBehaviour
 
                 if (hasEnteredDestination && !hasExitedDestination){
                     _goalAchieved = true;
+                    _gameManager.IncrementSetsCompleted();
                     var material = this.gameObject.GetComponent<MeshRenderer>().materials[0];
                     _playerPlatform.GetComponent<BoxCollider>().isTrigger = false;
                     material.color = Color.green;

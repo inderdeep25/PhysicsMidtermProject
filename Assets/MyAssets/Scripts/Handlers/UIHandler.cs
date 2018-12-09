@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIHandler : MonoBehaviour {
+public class UIHandler : MonoBehaviour
+{
 
     [SerializeField] private Slider _powerGauge;
     [SerializeField] private Text _timeTextLabel;
+
+    [SerializeField] private GameObject _gameResultPanel;
+    [SerializeField] private Text _gameResultLabel;
+
+    public bool shouldUpdateTime = true;
 
     private float _powerGaugeSpeed = 0.015f;
     private bool _shouldPowerGaugeMove = true;
@@ -14,7 +20,8 @@ public class UIHandler : MonoBehaviour {
 
     private float timeSinceStart = 0.0f;
 
-    public void ResetGauge(){
+    public void ResetGauge()
+    {
         _powerGauge.value = _powerGauge.maxValue / 2;
     }
 
@@ -23,7 +30,8 @@ public class UIHandler : MonoBehaviour {
         return _powerGauge.value;
     }
 
-    public void SetPowerGauge(bool shouldStart){
+    public void SetPowerGauge(bool shouldStart)
+    {
         _shouldPowerGaugeMove = shouldStart;
         _powerGauge.gameObject.SetActive(shouldStart);
     }
@@ -59,10 +67,17 @@ public class UIHandler : MonoBehaviour {
 
     }
 
+    public void ShowGameWonDialog(){
+        shouldUpdateTime = false;
+        _gameResultPanel.SetActive(true);
+        _gameResultLabel.text = "You Won! Your score is " + ((int) timeSinceStart * 1000).ToString();
+    }
+
     // Use this for initialization
     void Start () {
         _powerGauge.gameObject.SetActive(false);
-	}
+        _gameResultPanel.SetActive(false);
+    }
 	
     private void HandlePowerGauge(){
 
@@ -93,9 +108,11 @@ public class UIHandler : MonoBehaviour {
 
     private void Update()
     {
-        timeSinceStart += Time.deltaTime;
-        var minutes = (int) timeSinceStart / 60;
-        var seconds = (int)timeSinceStart - minutes * 60;
-        _timeTextLabel.text = minutes + ":" + seconds.ToString();
+        if(shouldUpdateTime){
+            timeSinceStart += Time.deltaTime;
+            var minutes = (int)timeSinceStart / 60;
+            var seconds = (int)timeSinceStart - minutes * 60;
+            _timeTextLabel.text = "Timer - " + minutes.ToString("D2") + ":" + seconds.ToString("D2");
+        }
     }
 }

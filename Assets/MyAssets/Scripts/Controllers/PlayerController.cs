@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
     private bool _isPlayerInStartPointOfAnyMovableObject;
     private MovableObjectController _objectToMove;
 
-    private UIHandler _uiHandler;
+    [SerializeField] private UIHandler _uiHandler;
 
     private bool _isGaugeOpen = false;
 
@@ -23,8 +23,6 @@ public class PlayerController : MonoBehaviour {
 
         _isPlayerInStartPointOfAnyMovableObject = false;
         _objectToMove = null;
-
-        _uiHandler = GameObject.Find("Canvas").GetComponent<UIHandler>();
 
     }
 	
